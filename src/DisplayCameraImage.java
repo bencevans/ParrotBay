@@ -3,6 +3,13 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
+import jp.sourceforge.qrcode.QRCodeDecoder;
+import jp.sourceforge.qrcode.exception.DecodingFailedException;
+import jp.sourceforge.qrcode.util.DebugCanvas;
+import jp.sourceforge.qrcode.util.DebugCanvasAdapter;
 
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IContainer;
@@ -20,9 +27,62 @@ public class DisplayCameraImage {
 	static private IContainer container = null;
 	static private int videoStreamId = -1;
 	static private IStreamCoder videoCoder = null;
-	static private VideoImage mScreen = null;
+	protected static VideoImage mScreen = null;
 	static private InetAddress inet_addr = null;
 	static private DatagramSocket atsocket = null;
+	
+	public static String findQR(int camera) throws Exception {
+
+		byte[] ip_bytes = new byte[4];
+		ip_bytes[0] = (byte) 192;
+		ip_bytes[1] = (byte) 168;
+		ip_bytes[2] = (byte) 1;
+		ip_bytes[3] = (byte) 1;
+
+		inet_addr = InetAddress.getByAddress(ip_bytes);
+		atsocket = new DatagramSocket();
+		
+		send_at_cmd("AT*CONFIG=605,\"video:video_channel\",\"" + camera + "\"");
+		
+		openJavaWindow();
+		
+		boolean searching = true;
+		
+		while (searching) {
+			System.out.println("Taking picture...");
+			
+			send_at_cmd("AT*CONFIG=605,\"video:video_channel\",\""
+					+ camera + "\"");
+			
+			BufferedImage im = CaptureDroneImage();
+			updateJavaWindow(im);
+			
+			System.out.println("Got image... Checking QR...");
+			
+			QRCodeDecoder decoder = new QRCodeDecoder();
+			
+			DebugCanvas canvas = new J2SECanvas();
+		    decoder.setCanvas(canvas);
+		    String decodedString = null;
+			
+			try {
+				decodedString = new String(decoder.decode(new J2SEImage(im)));
+
+			} catch (DecodingFailedException dfe) {
+				canvas.println("Error: " + dfe.getMessage());
+			} catch (Exception e) {
+				canvas.println("Error: " + e.getMessage());
+			}
+
+			
+			System.out.println("decodedString: " + decodedString);
+
+		}
+		
+		
+		return null;
+		
+	}
 
 	public static void main(String args[]) {
 		byte[] ip_bytes = new byte[4];
@@ -41,10 +101,16 @@ public class DisplayCameraImage {
 			send_at_cmd("AT*CONFIG=605,\"video:video_channel\",\""
 					+ cameraSelection + "\"");
 			openJavaWindow();
-			BufferedImage im = CaptureDroneImage();
-			updateJavaWindow(im);
-			CloseDrone();
-			atsocket.close();
+			while (true) {
+				System.out.println("bf");
+				send_at_cmd("AT*CONFIG=605,\"video:video_channel\",\""
+						+ cameraSelection + "\"");
+				BufferedImage im = CaptureDroneImage();
+				updateJavaWindow(im);
+			}
+
+//			CloseDrone();
+//			atsocket.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -202,3 +268,9 @@ public class DisplayCameraImage {
 		Thread.sleep(250);
 	}
 }
+
+class J2SECanvas extends DebugCanvasAdapter {
+	  public void println(String s) {
+	    //System.err.println(s);
+	  }
+	}
