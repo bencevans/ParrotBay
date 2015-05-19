@@ -4,13 +4,17 @@
 
 Text file's in the format:
 
-    x, y, z, c
-    
-    x = x real or int - coord
-    y = y real or int - coord
-    z = z real or int - coord
-    c = c int - camera - 1=bottom camera, 2=front camera
-    
+```
+x, y, z, c
+```
+
+```
+x = x real or int - coord
+y = y real or int - coord
+z = z real or int - coord
+c = c int - camera - 1=bottom camera, 2=front camera
+```
+
 ## 2. Find shotest path (donald)
 
 ## 3. Visit each coordinate
