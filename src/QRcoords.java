@@ -3,26 +3,32 @@
  * @version  0.1
  * @since    2015-05-19
  */
-public class QRcoords {
+public class QRcoords 
+{
 	//obvious enough
-	private int xcoord, ycoord, zcoord, cam;
+	private double xcoord, ycoord, zcoord, cam;
  
-	QRcoords(int x, int y, int z, int c){ 
+	QRcoords(double x, double y, double z, double c)
+	{ 
 	  xcoord = x; 
 	  ycoord = y;
 	  zcoord = z;
 	  cam = c;
 	} 
-	public int GetX(){ 
+	public double GetX()
+	{ 
 		return(xcoord); 
 	} 
-	public int GetY(){ 
+	public double GetY()
+	{ 
 		return(ycoord); 
 	}
-	public int GetZ(){ 
+	public double GetZ()
+	{ 
 		return(zcoord); 
 	}
-	public int GetC(){ 
+	public double GetC()
+	{ 
 		return(cam); 
 	}
 }
