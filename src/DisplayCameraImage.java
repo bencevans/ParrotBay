@@ -7,6 +7,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import jp.sourceforge.qrcode.QRCodeDecoder;
+import jp.sourceforge.qrcode.data.QRCodeImage;
 import jp.sourceforge.qrcode.exception.DecodingFailedException;
 import jp.sourceforge.qrcode.util.DebugCanvas;
 import jp.sourceforge.qrcode.util.DebugCanvasAdapter;
@@ -47,7 +48,9 @@ public class DisplayCameraImage {
 		openJavaWindow();
 		
 		boolean searching = true;
-		
+
+		String decodedString = null;
+
 		while (searching) {
 			System.out.println("Taking picture...");
 			
@@ -63,7 +66,6 @@ public class DisplayCameraImage {
 			
 			DebugCanvas canvas = new J2SECanvas();
 		    decoder.setCanvas(canvas);
-		    String decodedString = null;
 			
 			try {
 				decodedString = new String(decoder.decode(new J2SEImage(im)));
@@ -73,14 +75,16 @@ public class DisplayCameraImage {
 			} catch (Exception e) {
 				canvas.println("Error: " + e.getMessage());
 			}
-
+			
+			if(decodedString != null) {
+				searching = false;
+			}
 			
 			System.out.println("decodedString: " + decodedString);
 
 		}
 		
-		
-		return null;
+		return decodedString;
 		
 	}
 
@@ -273,4 +277,25 @@ class J2SECanvas extends DebugCanvasAdapter {
 	  public void println(String s) {
 	    //System.err.println(s);
 	  }
+	}
+
+class J2SEImage implements QRCodeImage {
+	  BufferedImage image;
+
+		public J2SEImage(BufferedImage source) {
+	    this.image = source;
+		}
+
+		public int getWidth() {
+			return image.getWidth();
+		}
+		
+		public int getHeight() {
+	    return image.getHeight();
+		}
+
+		public int getPixel(int x, int y) {
+	    return image.getRGB(x ,y);
+
+		}
 	}
