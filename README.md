@@ -1,5 +1,12 @@
 # ParrotBay
 
+## Setup
+
+1. Clone Repo
+2. Add referenced library from memory stick files
+
+
+
 ## 1. Read coordinates from txt file (abs & ebs)
 
 Text file's in the format:
