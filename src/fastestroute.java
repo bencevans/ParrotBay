@@ -20,6 +20,7 @@ public class fastestroute{
 		QRs.add(three);
 		QRs.add(four);
 
+		System.out.println(QRs);
 		bruteTSP(QRs);
 	}
 
@@ -30,28 +31,50 @@ public class fastestroute{
 		//total number of QR codes
 		int listsize = L.size();
 		System.out.println(listsize);
-		//array to store number of distances between two QRs
+		//number of possible distances between two QRs
 		int chooses2 = factorial(listsize) / (2* factorial(listsize - 2));
 		System.out.println(chooses2);
 		//array to store route output
-		QRcoords[] route = new QRcoords[chooses2];
+		QRcoords[] route = new QRcoords[listsize];
+		//variables for calculations
+		double xsqdiff, ysqdiff, zsqdiff;
 
 		//finding a point to start with
 		double startdist[] = new double[listsize];
 		for(int i = listsize - 1; i >= 0; i--){
 			QRcoords temp = L.get(i);
 			//pythagorean calculations for distance between two QRs
-			double xsqdiff = Math.pow((temp.GetX() - 0), 2);
-			double ysqdiff = Math.pow((temp.GetX() - 0), 2);
-			double zsqdiff = Math.pow((temp.GetX() - 0), 2);
+			xsqdiff = Math.pow((temp.getX() - 0), 2);
+			ysqdiff = Math.pow((temp.getY() - 0), 2);
+			zsqdiff = Math.pow((temp.getZ() - 0), 2);
 			startdist[i] = Math.sqrt(xsqdiff + ysqdiff + zsqdiff);
 		}
 //		System.out.println(Arrays.toString(startdist));
 //		System.out.println(getMin(startdist));
 		route[0] = L.get(getMin(startdist));
+		L.remove(getMin(startdist));
+		listsize = L.size();
+		System.out.println(L);
 		
-		//TODO
+		//TODO: loop for all others
+		for(int i = 0; listsize > 1; i++){
+			double nextdist[] = new double[listsize];
+			for(int j = 0; j < listsize; j++){
+				QRcoords temp = L.get(j);
+				//pythagorean calculations for distance between two QRs
+				xsqdiff = Math.pow((route[i].getX() - temp.getX()), 2);
+				ysqdiff = Math.pow((route[i].getY() - temp.getY()), 2);
+				zsqdiff = Math.pow((route[i].getZ() - temp.getZ()), 2);
+				nextdist[j] = Math.sqrt(xsqdiff + ysqdiff + zsqdiff);
+			}
+			route[i+1] = L.get(getMin(nextdist));
+			L.remove(getMin(nextdist));
+			listsize = L.size();
+			System.out.println(L);
+		}
 		
+		route[route.length-1] = L.get(0);
+		System.out.println(Arrays.toString(route));
 		return route;		
 
 	}
