@@ -30,6 +30,7 @@ public class ParrotBay {
 //		nearestneighbourTSP(filereader());
 
 		//STEP 3: CALCULATE ROUTE ACTUAL MOVEMENTS
+		// take off
 		System.out.println("Take Off");
 
 		//		String qrValue = DisplayCameraImage.findQR(1);
@@ -274,23 +275,64 @@ public class ParrotBay {
 	 * @param L	an arraylist of the QR coords as read from file input
 	 * @return  a QRcoords[] that has the coords ordered as the shortest route
 	 */
-	public static void movecalculations(QRcoords[] route){
-		//extreme points x= -16.26, +16.11; y= -3.62, +16.71
-		double x0 = route[0].getX();
-		double y0 = route[0].getY();
-		double z0 = route[0].getZ();
-		double c0 = route[0].getC();
-/*		if (x0 = +ve extreme){
-			
-		}
-		else if (x0 < 0){
-			//travel then turn left
+	public static void movecalculations(QRcoords[] route){	
+		//going to the next point
+		double xprev = 0;
+		double yprev = 0;
+		double zprev = 0;
+		double cprev = 0;
+		
+		for (int i = 0; i < route.length; i++){
+			if (i > 0){
+			xprev = route[i-1].getX();
+			yprev = route[i-1].getY();
+			zprev = route[i-1].getZ();
+			cprev = route[i-1].getC();
+			}
+			double xnext = route[i].getX();
+			double ynext = route[i].getY();
+			double znext = route[i].getZ();
+			double cnext = route[i].getC();
+			if (cnext == 1){
+				//no z movement (+0.88)
+				if (xnext < 0){
+					xnext = xnext - xprev;
+					// move left
+				}
+				else if (xnext > 0){
+					xnext = xnext - xprev;
+					// move right
+				}
+				if (ynext < 0){
+					ynext = ynext - yprev;
+					// move backward
+				}
+				else if (ynext > 0){
+					ynext = ynext - yprev;
+					// move forward
+				}
+			}
+			else if (cnext == 0){
+				//TODO: move z by z=z-0.88
+				if (xnext < 0){
+					xnext = xnext - xprev;
+					// move left
+				}
+				else if (xnext > 0){
+					xnext = xnext - xprev;
+					// move right
+				}
+				if (ynext < 0){
+					ynext = ynext - yprev;
+					// move backward
+				}
+				else if (ynext > 0){
+					ynext = ynext - yprev;
+					// move forward
+				}
+			}
 		}
 		
-			x=x-0.6
-	if x = -ve extreme
-			x=x+0.6	
-*/	//z +0.88
 	}
 		
 	/**
