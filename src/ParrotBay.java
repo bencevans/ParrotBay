@@ -9,19 +9,17 @@ import java.util.Scanner;
 public class ParrotBay {
 
 	public static void main(String[] args) throws Exception {
-		
-		// TODO Auto-generated method stub
+
 		//STEP 1: READ FILE & STEP 2: FIND BEST ROUTE
 		nearestneighbourTSP(filereader());
+
 		//STEP 3: CALCULATE ROUTE ACTUAL MOVEMENTS
-		
-		//STEP 4: MOVE AND QR READ CONFIRMS
 		System.out.println("Take Off");
 		
 		String qrValue = DisplayCameraImage.findQR(1);
 		System.out.println(qrValue);
 
-		//STEP 5: QUIT
+		//STEP 4: QUIT
 	}
 
 	/**
@@ -33,20 +31,20 @@ public class ParrotBay {
 	{
 		Scanner coordReader;
 		ArrayList<QRcoords> List = new ArrayList<QRcoords>();
-		
-		File readH = new File("E:\\xyzCoord.txt");
+		File readH = new File("E:\\DroneTestData.txt");
 		coordReader = new Scanner(new FileInputStream(readH));
 		
-		double[] arr = new double[4];
-		
+		String[] lineelements = new String[4];
 		while(coordReader.hasNext()){
-			for (int i = 0; i < 4; i++){
-				String coord_nocomma = coordReader.next().replaceAll(",","");
-				arr[i] = Double.parseDouble(coord_nocomma);
-			}
-			QRcoords set = new QRcoords(arr[0], arr[1], arr[2], arr[3]);		
+			String line = coordReader.nextLine();
+			lineelements = line.split(",");
+			QRcoords set = new QRcoords(Double.parseDouble(lineelements[0]),
+					Double.parseDouble(lineelements[1]),
+					Double.parseDouble(lineelements[2]),
+					Double.parseDouble(lineelements[3]));		
 			List.add(set);
 		}
+			
 		System.out.println(List);
 		return List;
 	}
@@ -104,6 +102,30 @@ public class ParrotBay {
 		return route;		
 	}
 	
+	/**
+	 * STEP 3: COMPUTE ALL MOVEMENTS
+	 * @param L	an arraylist of the QR coords as read from file input
+	 * @return  a QRcoords[] that has the coords ordered as the shortest route
+	 */
+	public static void movecalculations(QRcoords[] route){
+		//extreme points x= -16.26, +16.11; y= -3.62, +16.71
+		double x0 = route[0].getX();
+		double y0 = route[0].getY();
+		double z0 = route[0].getZ();
+		double c0 = route[0].getC();
+/*		if (x0 = +ve extreme){
+			
+		}
+		else if (x0 < 0){
+			//travel then turn left
+		}
+		
+			x=x-0.6
+	if x = -ve extreme
+			x=x+0.6	
+*/	//z +0.88
+	}
+		
 	/**
 	 * MISC: A generic factorial function
 	 */
