@@ -3,7 +3,7 @@ import java.util.Arrays;
 
 /**
  * @author   ParrotBay Donald 
- * @version  0.2
+ * @version  0.3
  * @since    2015-05-19
  */
 public class fastestroute{
@@ -13,33 +13,33 @@ public class fastestroute{
 		QRcoords two = new QRcoords (11, -3.5, 8, 1);
 		QRcoords three = new QRcoords (-12, 5.5, 6, 0);
 		QRcoords four = new QRcoords (13, 4.5, 9, 0);
+		QRcoords five = new QRcoords (14, 5, 5.5, 1);
 
-		ArrayList<QRcoords> QRs = new ArrayList<QRcoords>(4);
+		ArrayList<QRcoords> QRs = new ArrayList<QRcoords>();
 		QRs.add(one);
 		QRs.add(two);
 		QRs.add(three);
 		QRs.add(four);
+		QRs.add(five);
 
 		System.out.println(QRs);
-		bruteTSP(QRs);
+		nearestneighbourTSP(QRs);
 	}
 
 	/**
+	 * @param L	an arraylist of the QR coords as read from file input
 	 * @return  a QRcoords[] that has the coords ordered as the shortest route
 	 */
-	public static QRcoords[] bruteTSP(ArrayList<QRcoords> L){
+	public static QRcoords[] nearestneighbourTSP(ArrayList<QRcoords> L){
 		//total number of QR codes
 		int listsize = L.size();
 		System.out.println(listsize);
-		//number of possible distances between two QRs
-		int chooses2 = factorial(listsize) / (2* factorial(listsize - 2));
-		System.out.println(chooses2);
 		//array to store route output
 		QRcoords[] route = new QRcoords[listsize];
 		//variables for calculations
 		double xsqdiff, ysqdiff, zsqdiff;
 
-		//finding a point to start with
+		//starting: find the closest point to 0, 0, 0
 		double startdist[] = new double[listsize];
 		for(int i = listsize - 1; i >= 0; i--){
 			QRcoords temp = L.get(i);
@@ -49,14 +49,12 @@ public class fastestroute{
 			zsqdiff = Math.pow((temp.getZ() - 0), 2);
 			startdist[i] = Math.sqrt(xsqdiff + ysqdiff + zsqdiff);
 		}
-//		System.out.println(Arrays.toString(startdist));
-//		System.out.println(getMin(startdist));
 		route[0] = L.get(getMin(startdist));
 		L.remove(getMin(startdist));
 		listsize = L.size();
 		System.out.println(L);
 		
-		//TODO: loop for all others
+		//loop: find the nearest neighbour to visit
 		for(int i = 0; listsize > 1; i++){
 			double nextdist[] = new double[listsize];
 			for(int j = 0; j < listsize; j++){
@@ -73,10 +71,11 @@ public class fastestroute{
 			System.out.println(L);
 		}
 		
+		//ending: put the last coords last
 		route[route.length-1] = L.get(0);
+		
 		System.out.println(Arrays.toString(route));
 		return route;		
-
 	}
 
 	/**
