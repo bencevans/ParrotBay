@@ -1,5 +1,9 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 
 public class ParrotBay {
@@ -7,10 +11,8 @@ public class ParrotBay {
 	public static void main(String[] args) throws Exception {
 		
 		// TODO Auto-generated method stub
-		//STEP 1: READ FILE
-		
-		//STEP 2: FIND BEST ROUTE
-
+		//STEP 1: READ FILE & STEP 2: FIND BEST ROUTE
+		nearestneighbourTSP(filereader());
 		//STEP 3: CALCULATE ROUTE ACTUAL MOVEMENTS
 		
 		//STEP 4: MOVE AND QR READ CONFIRMS
@@ -22,6 +24,33 @@ public class ParrotBay {
 		//STEP 5: QUIT
 	}
 
+	/**
+	 * STEP 1: READ FILE
+	 * @return  an arraylist of QRcoords
+	 */
+
+	public static ArrayList<QRcoords> filereader() throws IOException  
+	{
+		Scanner coordReader;
+		ArrayList<QRcoords> List = new ArrayList<QRcoords>();
+		
+		File readH = new File("E:\\xyzCoord.txt");
+		coordReader = new Scanner(new FileInputStream(readH));
+		
+		double[] arr = new double[4];
+		
+		while(coordReader.hasNext()){
+			for (int i = 0; i < 4; i++){
+				String coord_nocomma = coordReader.next().replaceAll(",","");
+				arr[i] = Double.parseDouble(coord_nocomma);
+			}
+			QRcoords set = new QRcoords(arr[0], arr[1], arr[2], arr[3]);		
+			List.add(set);
+		}
+		System.out.println(List);
+		return List;
+	}
+	
 	/**
 	 * STEP 2: FIND BEST ROUTE
 	 * @param L	an arraylist of the QR coords as read from file input
