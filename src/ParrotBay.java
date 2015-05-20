@@ -14,6 +14,7 @@ public class ParrotBay {
 		nearestneighbourTSP(filereader());
 
 		//STEP 3: CALCULATE ROUTE ACTUAL MOVEMENTS
+		// take off
 		System.out.println("Take Off");
 		
 		String qrValue = DisplayCameraImage.findQR(1);
@@ -107,23 +108,33 @@ public class ParrotBay {
 	 * @param L	an arraylist of the QR coords as read from file input
 	 * @return  a QRcoords[] that has the coords ordered as the shortest route
 	 */
-	public static void movecalculations(QRcoords[] route){
-		//extreme points x= -16.26, +16.11; y= -3.62, +16.71
-		double x0 = route[0].getX();
-		double y0 = route[0].getY();
-		double z0 = route[0].getZ();
-		double c0 = route[0].getC();
-/*		if (x0 = +ve extreme){
-			
-		}
-		else if (x0 < 0){
-			//travel then turn left
+	public static void movecalculations(QRcoords[] route){	
+		//going to the next point
+		for (int i = 0; i < route.length; ){
+			double x0 = route[0].getX();
+			double y0 = route[0].getY();
+			double z0 = route[0].getZ();
+			double c0 = route[0].getC();
+			if (c0 == 1){
+				//no z movement (+0.88)
+				if (x0 < 0){
+					// move left
+				}
+				else if (x0 > 0){
+					// move right
+				}
+				if (y0 < 0){
+					// move backward
+				}
+				else if (y0 > 0){
+					// move forward
+				}
+			}
+			else if (c0 == 0){
+				//TODO
+			}
 		}
 		
-			x=x-0.6
-	if x = -ve extreme
-			x=x+0.6	
-*/	//z +0.88
 	}
 		
 	/**
