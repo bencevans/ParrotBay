@@ -22,7 +22,7 @@ z = z real or int - coord
 c = c int - camera - 1=bottom camera, 2=front camera
 ```
 
-## 2. Find shotest path (donald)
+## 2. Find shortest path (donald)
 
 ## 3. Visit each coordinate
 
