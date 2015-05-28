@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-
 public class ParrotBay {
 
 	static int seq = 1;
@@ -24,20 +23,12 @@ public class ParrotBay {
 	static DatagramSocket socket;
 
 	public static void main(String[] args) throws Exception {
-// 1 second = 3.9 meters
+		//1 second = 3.9 meters
 
 		//STEP 1: READ FILE & STEP 2: FIND BEST ROUTE
-//		nearestneighbourTSP(filereader());
+		//nearestneighbourTSP(filereader());
 
-		//STEP 3: CALCULATE ROUTE ACTUAL MOVEMENTS
-		// take off
-		System.out.println("Take Off");
-
-		//		String qrValue = DisplayCameraImage.findQR(1);
-		//		System.out.println(qrValue);
-
-		//		Connect ...
-
+		//STEP 3: CONNECT TO DRONE...
 		String ip = "192.168.1.1";
 
 		if (args.length >= 1) {
@@ -59,7 +50,6 @@ public class ParrotBay {
 		System.out.println("IP: " + ip);
 		System.out.println("Speed: " + speed);
 
-
 		ByteBuffer bb = ByteBuffer.allocate(4);
 		fb = bb.asFloatBuffer();
 		ib = bb.asIntBuffer();
@@ -68,14 +58,15 @@ public class ParrotBay {
 		socket = new DatagramSocket();
 		socket.setSoTimeout(3000);
 
-		/* altitude max 2m */
-		send_at_cmd("AT*CONFIG=1,\"control:altitude_max\",\"5000\"");
+		/* altitude max 6m */
+		send_at_cmd("AT*CONFIG=1,\"control:altitude_max\",\"6000\"");
 		if (args.length == 2) { // Command line mode
 			send_at_cmd(args[1]);
 			System.exit(0);
 		}
-
-		//		Takeoff
+		
+		//STEP 4: CALCULATE ROUTE ACTUAL MOVEMENTS
+		// take off
 		takeoff();
 
 		forwards(2000);
@@ -83,25 +74,30 @@ public class ParrotBay {
 		backwards(2000); 
 		right(2000);
 
-
+		//		String qrValue = DisplayCameraImage.findQR(1);
+		//		System.out.println(qrValue);
+		
+		//land
 		land();
-
-		//		Takedown
-
-
-
 	}
 
 	static String action;
 	static String at_cmd;
-
-
-
-	public static void up() throws Exception {
+	
+	public static void up(int timeToRun) throws Exception {
 		action = "Go Up (gaz+)";
 		at_cmd = "AT*PCMD=" + (seq++) + ",1,0,0," + intOfFloat(speed)
 				+ ",0";
 		System.out.println(action);
+		send_at_cmd_time(at_cmd, timeToRun);
+	}
+	
+	public static void down(int timeToRun) throws Exception {
+		action = "Go Up (gaz+)";
+		at_cmd = "AT*PCMD=" + (seq++) + ",1,0,0," + intOfFloat(-speed)
+				+ ",0";
+		System.out.println(action);
+		send_at_cmd_time(at_cmd, timeToRun);
 	}
 	
 	public static void hover() throws Exception {
@@ -186,7 +182,6 @@ public class ParrotBay {
 				inet_addr, 5556);
 		socket.send(packet);
 
-		//STEP 4: QUIT
 	}
 
 	/**
@@ -230,38 +225,30 @@ public class ParrotBay {
 		//variables for calculations
 		double xsqdiff, ysqdiff, zsqdiff;
 
-		//starting: find the closest point to 0, 0, 0
-		double startdist[] = new double[listsize];
-		for(int i = listsize - 1; i >= 0; i--){
-			QRcoords temp = L.get(i);
-			//pythagorean calculations for distance between two QRs
-			xsqdiff = Math.pow((temp.getX() - 0), 2);
-			ysqdiff = Math.pow((temp.getY() - 0), 2);
-			zsqdiff = Math.pow((temp.getZ() - 0), 2);
-			startdist[i] = Math.sqrt(xsqdiff + ysqdiff + zsqdiff);
-		}
-		route[0] = L.get(getMin(startdist));
-		L.remove(getMin(startdist));
-		listsize = L.size();
-		System.out.println(L);
-		
 		//loop: find the nearest neighbour to visit
 		for(int i = 0; listsize > 1; i++){
 			double nextdist[] = new double[listsize];
 			for(int j = 0; j < listsize; j++){
 				QRcoords temp = L.get(j);
 				//pythagorean calculations for distance between two QRs
-				xsqdiff = Math.pow((route[i].getX() - temp.getX()), 2);
-				ysqdiff = Math.pow((route[i].getY() - temp.getY()), 2);
-				zsqdiff = Math.pow((route[i].getZ() - temp.getZ()), 2);
+				if (i == 0){
+					xsqdiff = Math.pow((temp.getX() - 0), 2);
+					ysqdiff = Math.pow((temp.getY() - 0), 2);
+					zsqdiff = Math.pow((temp.getZ() - 0), 2);
+				}
+				else{
+					xsqdiff = Math.pow((route[i-1].getX() - temp.getX()), 2);
+					ysqdiff = Math.pow((route[i-1].getY() - temp.getY()), 2);
+					zsqdiff = Math.pow((route[i-1].getZ() - temp.getZ()), 2);
+				}
 				nextdist[j] = Math.sqrt(xsqdiff + ysqdiff + zsqdiff);
 			}
-			route[i+1] = L.get(getMin(nextdist));
+			route[i] = L.get(getMin(nextdist));
 			L.remove(getMin(nextdist));
 			listsize = L.size();
 			System.out.println(L);
 		}
-		
+	
 		//ending: put the last coords last
 		route[route.length-1] = L.get(0);
 		
@@ -271,16 +258,17 @@ public class ParrotBay {
 	}
 	
 	/**
-	 * STEP 3: COMPUTE ALL MOVEMENTS
+	 * STEP 4: COMPUTE MOVEMENTS AND MOVE 
 	 * @param L	an arraylist of the QR coords as read from file input
 	 * @return  a QRcoords[] that has the coords ordered as the shortest route
+	 * @throws Exception 
 	 */
-	public static void movecalculations(QRcoords[] route){	
-		//going to the next point
+	public static void movecalculations(QRcoords[] route) throws Exception{	
 		double xprev = 0;
 		double yprev = 0;
 		double zprev = 0;
 		double cprev = 0;
+		//using this simple conversion for now: 1 second = 3.9 meters
 		
 		for (int i = 0; i < route.length; i++){
 			if (i > 0){
@@ -293,42 +281,60 @@ public class ParrotBay {
 			double ynext = route[i].getY();
 			double znext = route[i].getZ();
 			double cnext = route[i].getC();
+			//actual moving logic
 			if (cnext == 1){
 				//no z movement (+0.88)
 				if (xnext < 0){
 					xnext = xnext - xprev;
 					// move left
+					left((int)(xnext/3.9*1000));
 				}
 				else if (xnext > 0){
 					xnext = xnext - xprev;
 					// move right
+					right((int)(xnext/3.9*1000));
 				}
 				if (ynext < 0){
 					ynext = ynext - yprev;
 					// move backward
+					backwards((int)(ynext/3.9*1000));
 				}
 				else if (ynext > 0){
 					ynext = ynext - yprev;
 					// move forward
+					forwards((int)(ynext/3.9*1000));
 				}
 			}
 			else if (cnext == 0){
-				//TODO: move z by z=z-0.88
+				if (znext > zprev){
+					znext = znext - zprev -0.88;
+					//move up
+					up((int)(znext/3.9*1000));
+				}
+				else if (zprev > znext){
+					znext = znext - zprev +0.88;
+					//move down
+					down((int)(znext/3.9*1000));
+				}
 				if (xnext < 0){
 					xnext = xnext - xprev;
 					// move left
+					left((int)(xnext/3.9*1000));
 				}
 				else if (xnext > 0){
 					xnext = xnext - xprev;
 					// move right
+					right((int)(xnext/3.9*1000));
 				}
 				if (ynext < 0){
 					ynext = ynext - yprev;
 					// move backward
+					backwards((int)(ynext/3.9*1000));
 				}
 				else if (ynext > 0){
 					ynext = ynext - yprev;
 					// move forward
+					forwards((int)(ynext/3.9*1000));
 				}
 			}
 		}
