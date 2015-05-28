@@ -78,11 +78,8 @@ public class ParrotBay {
 		//		Takeoff
 		takeoff();
 
-		forwards(2000);
-		left(2000);
-		backwards(2000); 
-		right(2000);
-
+		up(500);
+		down(500);
 
 		land();
 
@@ -97,13 +94,22 @@ public class ParrotBay {
 
 
 
-	public static void up() throws Exception {
+	public static void up(int timeToRun) throws Exception {
 		action = "Go Up (gaz+)";
 		at_cmd = "AT*PCMD=" + (seq++) + ",1,0,0," + intOfFloat(speed)
 				+ ",0";
 		System.out.println(action);
+		send_at_cmd_time(at_cmd, timeToRun);
 	}
 	
+	public static void down(int timeToRun) throws Exception {
+		action = "Go Up (gaz+)";
+		at_cmd = "AT*PCMD=" + (seq++) + ",1,0,0," + intOfFloat(-speed)
+				+ ",0";
+		System.out.println(action);
+		send_at_cmd_time(at_cmd, timeToRun);
+	}
+
 	public static void hover() throws Exception {
 		action = "Hovering";
 		at_cmd = "AT*PCMD=" + (seq++) + ",1,0,0,0,0";
