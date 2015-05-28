@@ -230,38 +230,30 @@ public class ParrotBay {
 		//variables for calculations
 		double xsqdiff, ysqdiff, zsqdiff;
 
-		//starting: find the closest point to 0, 0, 0
-		double startdist[] = new double[listsize];
-		for(int i = listsize - 1; i >= 0; i--){
-			QRcoords temp = L.get(i);
-			//pythagorean calculations for distance between two QRs
-			xsqdiff = Math.pow((temp.getX() - 0), 2);
-			ysqdiff = Math.pow((temp.getY() - 0), 2);
-			zsqdiff = Math.pow((temp.getZ() - 0), 2);
-			startdist[i] = Math.sqrt(xsqdiff + ysqdiff + zsqdiff);
-		}
-		route[0] = L.get(getMin(startdist));
-		L.remove(getMin(startdist));
-		listsize = L.size();
-		System.out.println(L);
-		
 		//loop: find the nearest neighbour to visit
 		for(int i = 0; listsize > 1; i++){
 			double nextdist[] = new double[listsize];
 			for(int j = 0; j < listsize; j++){
 				QRcoords temp = L.get(j);
 				//pythagorean calculations for distance between two QRs
-				xsqdiff = Math.pow((route[i].getX() - temp.getX()), 2);
-				ysqdiff = Math.pow((route[i].getY() - temp.getY()), 2);
-				zsqdiff = Math.pow((route[i].getZ() - temp.getZ()), 2);
+				if (i == 0){
+					xsqdiff = Math.pow((temp.getX() - 0), 2);
+					ysqdiff = Math.pow((temp.getY() - 0), 2);
+					zsqdiff = Math.pow((temp.getZ() - 0), 2);
+				}
+				else{
+					xsqdiff = Math.pow((route[i-1].getX() - temp.getX()), 2);
+					ysqdiff = Math.pow((route[i-1].getY() - temp.getY()), 2);
+					zsqdiff = Math.pow((route[i-1].getZ() - temp.getZ()), 2);
+				}
 				nextdist[j] = Math.sqrt(xsqdiff + ysqdiff + zsqdiff);
 			}
-			route[i+1] = L.get(getMin(nextdist));
+			route[i] = L.get(getMin(nextdist));
 			L.remove(getMin(nextdist));
 			listsize = L.size();
 			System.out.println(L);
 		}
-		
+	
 		//ending: put the last coords last
 		route[route.length-1] = L.get(0);
 		
