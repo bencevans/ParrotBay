@@ -104,6 +104,13 @@ public class ParrotBay {
 		System.out.println(action);
 	}
 	
+	public static void down() throws Exception {
+		action = "Go Up (gaz+)";
+		at_cmd = "AT*PCMD=" + (seq++) + ",1,0,0," + intOfFloat(-speed)
+				+ ",0";
+		System.out.println(action);
+	}
+
 	public static void hover() throws Exception {
 		action = "Hovering";
 		at_cmd = "AT*PCMD=" + (seq++) + ",1,0,0,0,0";
