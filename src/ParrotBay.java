@@ -305,7 +305,12 @@ public class ParrotBay {
 				}
 			}
 			else if (cnext == 0){
-				//TODO: move z by z=z-0.88
+				if (znext > zprev){
+					//move z by znext = znext - zprev -0.88
+				}
+				else if (zprev > znext){
+					//move z by znext = znext - zprev +0.88
+				}
 				if (xnext < 0){
 					xnext = xnext - xprev;
 					// move left
