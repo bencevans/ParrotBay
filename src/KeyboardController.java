@@ -135,7 +135,7 @@ class KeyboardController extends Frame implements KeyListener {
 		socket.setSoTimeout(3000);
 
 		/* altitude max 2m */
-		send_at_cmd("AT*CONFIG=1,\"control:altitude_max\",\"2000\"");
+		send_at_cmd("AT*CONFIG=1,\"control:altitude_max\",\"6000\"");
 		if (args.length == 2) { // Command line mode
 			send_at_cmd(args[1]);
 			System.exit(0);

@@ -69,6 +69,7 @@ public class ParrotBay {
 		// take off
 		takeoff();
 
+<<<<<<< HEAD
 		forwards(2000);
 		left(2000);
 		backwards(2000); 
@@ -78,18 +79,40 @@ public class ParrotBay {
 		//		System.out.println(qrValue);
 		
 		//land
+=======
+		up(500);
+		down(500);
+
+>>>>>>> origin/master
 		land();
 	}
 
 	static String action;
 	static String at_cmd;
+<<<<<<< HEAD
 	
+=======
+
+
+
+>>>>>>> origin/master
 	public static void up(int timeToRun) throws Exception {
 		action = "Go Up (gaz+)";
 		at_cmd = "AT*PCMD=" + (seq++) + ",1,0,0," + intOfFloat(speed)
 				+ ",0";
 		System.out.println(action);
 		send_at_cmd_time(at_cmd, timeToRun);
+<<<<<<< HEAD
+	}
+	
+	public static void down(int timeToRun) throws Exception {
+		action = "Go Up (gaz+)";
+		at_cmd = "AT*PCMD=" + (seq++) + ",1,0,0," + intOfFloat(-speed)
+				+ ",0";
+		System.out.println(action);
+		send_at_cmd_time(at_cmd, timeToRun);
+=======
+>>>>>>> origin/master
 	}
 	
 	public static void down(int timeToRun) throws Exception {
@@ -99,7 +122,7 @@ public class ParrotBay {
 		System.out.println(action);
 		send_at_cmd_time(at_cmd, timeToRun);
 	}
-	
+
 	public static void hover() throws Exception {
 		action = "Hovering";
 		at_cmd = "AT*PCMD=" + (seq++) + ",1,0,0,0,0";
@@ -307,6 +330,7 @@ public class ParrotBay {
 			}
 			else if (cnext == 0){
 				if (znext > zprev){
+<<<<<<< HEAD
 					znext = znext - zprev -0.88;
 					//move up
 					up((int)(znext/3.9*1000));
@@ -315,6 +339,12 @@ public class ParrotBay {
 					znext = znext - zprev +0.88;
 					//move down
 					down((int)(znext/3.9*1000));
+=======
+					//move z by znext = znext - zprev -0.88
+				}
+				else if (zprev > znext){
+					//move z by znext = znext - zprev +0.88
+>>>>>>> origin/master
 				}
 				if (xnext < 0){
 					xnext = xnext - xprev;
